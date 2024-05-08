@@ -16,8 +16,8 @@ fh_out_one_pack <- main_functional_hunter( #Perform enrichment analysis
         enrich_methods = "o" # Use overepresentation analysis only
 )
 
-write_expression_report(exp_results=degh_out_one_pack) #Reporte html de expresión
 write_enrich_files(func_results=fh_out_one_pack)
 write_functional_report(hunter_results=degh_out_one_pack, 
                         func_results=fh_out_one_pack) #Reporte html de enriquecimiento main_functional_hunter
+write_expression_report(exp_results=degh_out_one_pack) #Reporte html de expresión
 
