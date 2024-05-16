@@ -1,0 +1,84 @@
+# Preparación de un PC con Windows para realizar bioinformática a través del subsistema de Linux en Windows (WSL)
+
+# Lo primero que se realizó fue la descarga del subsistema de Linux en Windows, también conocido como WSL. Este programa se puede instalar directamente de la aplicación MICROSOFT STORE.
+
+# Una vez instalado la aplicación, lo único que tendremos que hacer es iniciar sesión y determinar el directorio en el que se va a realizar el resto del trabajo.
+
+# Tras esto, ya podríamos comenzar con el proceso de instalación de R en Ubuntu.
+
+# Para instalar el sistema completo de R, usaremos los siguientes comandos:
+
+sudo apt-get update
+sudo apt-get install r-base
+
+# Los usuarios que necesitan compilar paquetes R desde el código fuente [p. ej. Los mantenedores de paquetes, o cualquier persona que instale paquetes con install.packages()] también deben instalar el paquete r-base-dev:
+
+sudo apt-get install r-base-dev
+
+# Para instalar paquetes de R, se puede simplemente utilizar el comando install.packages(). Pero a diferencia de Windows y macOS, CRAN no crea archivos binarios para ninguna de las distribuciones de Linux. Esto significa que cada paquete se instala desde el código fuente, por lo que algunos paquetes tardarán un tiempo en instalarse cada vez que haya una nueva versión. Para obtener paquetes binarios adicionales para R (actualmente hay más de 4000 paquetes), debemos de consultar los diferentes PPA (archivos de paquetes personales) de CRAN2deb4ubuntu. 
+
+# Para la instalación de los últimos paquetes de R, utilizaremos una de la siguientes entradas, aunque va a variar dependiendo de la versión de Ubuntu que usemos. Para saber que versión de Ubuntu utilizaremos el siguiente comando:
+
+lsb_release -a
+
+# De forma que dependiendo de la versión usaremos una de las siguientes entradas:
+
+deb https://cloud.r-project.org/bin/linux/ubuntu jammy-cran40/
+
+# o
+
+deb https://cloud.r-project.org/bin/linux/ubuntu impish-cran40/
+
+# o
+
+deb https://cloud.r-project.org/bin/linux/ubuntu focal-cran40/
+
+# o
+
+deb https://cloud.r-project.org/bin/linux/ubuntu bionic-cran40/
+
+# o
+
+deb https://cloud.r-project.org/bin/linux/ubuntu xenial-cran40/
+
+# Esto nos va a permitir instalar todo el conjunto de tidyverse de paquetes de R más sus dependencias del sistema en poco tiempo:
+
+sudo apt install r-cran-tidyverse
+
+# Hay que tener en cuenta que existe una desventaja al utilizar los paquetes binarios prediseñados de R. Como ya fueron creados, no incluyen ninguna dependencia del sistema aparte de solo la que sea necesaria para compilar el paquete. Por ejemplo, puede instalar y utilizar el paquete RCurl con sudo apt install r-cran-rcurl, pero aún así obtendrá un error al ejecutar install.packages("RCurl"). Esto se debe a que RCurl requiere la biblioteca del sistema libcurl4 para ejecutarse, pero además necesita la biblioteca del sistema libcurl4-openssl-dev para compilar el paquete desde el código fuente. Por lo tanto, si instala paquetes de R desde el código fuente porque no están disponibles en un PPA, querrá instalar algunas de las bibliotecas del sistema comúnmente requeridas, como libcurl4-openssl-dev:
+
+sudo apt install libcurl4-openssl-dev
+
+# Este es un caso específico que ocurre al intentar instalar el paquete Rcurl, este paquete puede ser necesario para el funcionamiento de otros paquetes, por lo que sería recomendable su instalación, así como la instalación de sus dependencias.
+
+# Es importante tener esto en cuenta, porque es uno de los fallos que se producen al querer instalar el paquete de R BiocManager, en el cual es necesario instalar estas dependencias, ya que si no se instalan, el paquete no se instalará adecuadamente y no funcionará correctamente. En caso de que siga dando fallos, se puede probar el instalar la siguiente dependencia:
+
+sudo apt install libssl-dev
+
+# Otro problema con el que nos podemos encontrar es a la hora de instalar el paquete de R DESeq2, en el cual nos dará error al intentar instalarlo por la falta de la dependencia de libxml2, de forma que para solucionar este problema se instalará la dependencia directamente usando el siguiente comando:
+
+sudo apt-get install libxml2-dev
+
+sudo apt-get install libglpk-dev
+
+# (Estos han sido los problemas que surgieron durante el proceso de instalación de R y sus paquetes)
+
+# Por ello, una vez instaladas las dependencias anteriores se instaló el paquete BiocManager. Es recomendable instalar este paquete con APT, ya que al ser parte de la PPA c2d4u, se encontrará actualizado:
+
+sudo apt install r-cran-biocmanager
+
+# Gracias a este paquete, podremos instalar cualquier paquete de Bioconductor según sea necesario desde R. Para ello se hará uso del comando BiocManager::install(), un ejemplo sería el siguiente:
+
+R
+
+BiocManager::install("SummarizedExperiment")
+
+# Solo habría que sustituir el nombre de SummarizedExperiment con el nombre del paquete que se quiere instalar (importante no olvidar las comillas).
+
+# En caso de que al usar BiocManager nos dé un error de que no se encuentra el paquete disponible para la versión actual de R, se debe probar a actualizar BiocManager desde R con el siguiente comando:
+
+if (!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+BiocManager::install(version = "3.18")
+
+# Esto debería de solucionar el problema.
