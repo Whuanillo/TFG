@@ -1,0 +1,78 @@
+Instalación y configuración de SRAToolKit y modificación de los archivos SRA.
+
+Para ello usaremos el siguiente procedimiento en la terminal de WSL:
+
+1. Se obtuvo el archivo tar de la ubicación canónica en NCBI:
+
+wget --output-document sratoolkit.tar.gz https://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/current/sratoolkit.current-ubuntu64.tar.gz
+
+2. Se extrajo el contenido del archivo tar:
+
+tar -vxzf sratoolkit.tar.gz
+
+3. Se agregó la ruta a los binarios a su variable de entorno PATH:
+
+export PATH=$PATH:$PWD/sratoolkit.3.0.0-mac64/bin
+
+4. Verificación de que el shell encontrará los binarios:
+
+which fastq-dump
+
+5. Configuración rápida:
+
+Solo hay una serie de opciones que deben habilitarse para poder acceder a datos públicos y de acceso controlado en la nube. Para iniciar la configuración, ejecute:
+
+vdb-config-i
+
+Verá una pantalla donde puede operar los botones presionando la letra resaltada en rojo, o presionando la tecla Tab hasta llegar al botón deseado y luego presionando la tecla espacio o Enter.
+
+	I. Se habilitó la opción "Acceso remoto" en la pantalla principal.
+
+	II. En el supuesto de que se quiera que el kit de herramientas utilice de forma predeterminada el formato SRA Lite más pequeño con puntuaciones de calidad 	simplificadas, configure la opción "Preferir archivos SRA Lite con puntuaciones de calidad base simplificadas" en la pantalla principal.
+
+	III. Se continuó con la pestaña "Caché" donde se habilitó el "almacenamiento en caché de archivos local" y se configuró la "Ubicación del repositorio de 	usuarios".
+
+		a) El directorio del repositorio debe configurarse en una carpeta vacía. Esta es la carpeta donde Prefetch depositará los archivos.
+
+6. Comprobación de que la herramienta sea funcional:
+
+fastq-dump --stdout -X 2 SRR390728
+
+El comando debería producir este resultado exacto (y nada más):
+
+	Read 2 spots for SRR390728
+	Written 2 spots for SRR390728
+	@SRR390728.1 1 length=72
+	CATTCTTCACGTAGTTCTCGAGCCTTGGTTTTCAGCGATGGAGAATGACTTTGACAAGCTGAGAGAAGNTNC
+	+SRR390728.1 1 length=72
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;9;;665142;;;;;;;;;;;;;;;;;;;;;;;;;;;;;96&&&&(
+	@SRR390728.2 2 length=72
+	AAGTAGGTCTCGTCTGTGTTTTCTACGAGCTTGTGTTCCAGCTGACCCACTCCCTGGGTGGGGGGACTGGGT
+	+SRR390728.2 2 length=72
+	;;;;;;;;;;;;;;;;;4;;;;3;393.1+4&&5&&;;;;;;;;;;;;;;;;;;;;;<9;<;;;;;464262
+
+Una vez instalada la herramienta de SRAToolKit y configurada, se va a proceder a la descarga del archivo SRA de la muestra SRR18716583 como demostración, para ello utilizaremos los siguientes comandos:
+
+vdb-config --prefetch-to-cwd
+
+prefetch SRR18716583
+
+1. Convertir SRA a FASTQ:
+
+fastq-dump --split-files SRR18716583
+
+El parámetro --split-files es útil para datos de secuenciación pareados (paired-end sequencing), ya que genera dos archivos FASTQ separados para las lecturas hacia adelante y hacia atrás.
+
+2. Control de Calidad: Se usó FastQC para este propósito, aunque para ello primero hay que instalar la función fastqc, usaremos el siguiente comando:
+
+apt install fastqc
+
+Tras instalar fastqc, realizaremos el control de calidad a los dos archivos obtenidos anteriormente:
+
+~/tools/FastQC/fastqc SRR18716583_1.fastq SRR18716583_2.fastq
+
+3. Recortar Lecturas (si es necesario):
+
+trim_galore --paired SRR18716583_1.fastq SRR18716583_2.fastq
+
+Esto generará archivos recortados que terminan en _val_1.fq y _val_2.fq para lecturas hacia adelante y hacia atrás, respectivamente.
