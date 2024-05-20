@@ -1,0 +1,135 @@
+#!/usr/bin/env bash
+
+#Generamos un directorio para todos los datos que necesitemos y/o generemos
+
+cd
+
+if [ ! -d data_tfg ]; then
+    echo "El directorio data_tfg no existe. Creando el directorio..."
+    mkdir data_tfg
+    cd data_tfg
+    mkdir sra_data
+    mkdir salmon_data
+else
+    echo "El directorio data_tfg ya existe en el directorio actual."
+    cd data_tfg
+
+    if [ ! -d sra_data ]; then
+        echo "El directorio sra_data no existe. Creando el directorio..."
+        mkdir sra_data
+    else
+        echo "El directorio sra_data ya existe en el directorio actual."
+    fi
+    
+    if [ ! -d salmon_data ]; then
+        echo "El directorio salmon_data no existe. Creando el directorio..."
+        mkdir salmon_data
+    else
+        echo "El directorio salmon_data ya existe en el directorio actual."
+    fi
+fi
+
+#Descargar e instalar sratoolkit (fastqc y salmon también por si acaso)
+
+cd
+
+if [ ! -d tools ]; then
+        echo "El directorio tools no existe. Creando el directorio..."
+        mkdir tools
+        cd tools
+    else
+        echo "El directorio tools ya existe en el directorio actual."
+        cd tools
+    fi
+
+if [ ! -d sratoolkit.3.0.10-ubuntu64 ]; then
+    echo "El directorio deseado no existe. Descargando..."
+    wget --output-document sratoolkit.tar.gz https://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/current/sratoolkit.current-ubuntu64.tar.gz
+    tar -vxzf sratoolkit.tar.gz
+    rm sratoolkit.tar.gz
+    export PATH=$PATH:$PWD/sratoolkit.3.0.10-ubuntu64/bin
+else
+    echo "El directorio deseado ya existe en el directorio actual."
+fi
+
+#Descarga de FastQC (en caso de que haga falta)
+if [ ! -d FastQC ]; then
+    echo "El archivo deseado no existe. Descargando..."
+    wget https://www.bioinformatics.babraham.ac.uk/projects/fastqc/fastqc_v0.11.9.zip
+    unzip fastqc_v0.11.9.zip
+    cd FastQC
+    chmod 755 fastqc
+    ./fastqc --help
+    cd ..
+else
+    echo "El archivo deseado ya existe en el directorio actual."
+fi
+
+#Descarga de Salmon (si hace falta)
+if [ ! -d salmon-1.2.1 ]; then
+    echo "El archivo deseado no existe. Descargando..."
+    wget https://github.com/COMBINE-lab/salmon/releases/download/v1.2.1/salmon-1.2.1_linux_x86_64.tar.gz
+    tar xvf salmon-1.2.1_linux_x86_64.tar.gz
+    mv salmon-latest_linux_x86_64 salmon-1.2.1
+    cd salmon-1.2.1/bin
+    ./salmon 
+    cd ~/tools
+else
+    echo "El archivo deseado ya existe en el directorio actual."
+fi
+
+#Una vez que las herramientas están descargadas pasamos a generar los datos de conteos
+
+cd ~/data_tfg/sra_data
+
+vdb-config --prefetch-to-cwd
+
+#Generamos vector con los nombres de los archivos SRA de interés
+declare -a sra_files=("SRR18716583" "SRR18716584"  "SRR18716585"  "SRR18716586"  "SRR18716587"  "SRR18716588")
+
+#Realizamos el proceso de descarga, procesamiento y generación de los datos de conteo de cada una de las muestras
+if [ ! -d ~/data_tfg/salmon_data ]; then
+    echo "El archivo deseado no existe."
+else
+    echo "Generando archivos..."
+    for id in ${sra_files[@]}; do
+        prefetch ${id}
+        fastq-dump --split-files ${id}
+        rm -r ${id}
+        ~/tools/FastQC/fastqc ${id}_1.fastq ${id}_2.fastq
+        trim_galore --paired ${id}_1.fastq ${id}_2.fastq
+        rm ${id}_1.fastq ${id}_2.fastq
+        ~/tools/salmon-1.2.1/bin/salmon quant --threads 6 \
+            --index ~/db/refanno/gencode.vM34_salmon-1.2.1 \
+            --libType ISR \
+            --mates1 ${id}_1_val_1.fq \
+            --mates2 ${id}_2_val_2.fq \
+            --numBootstraps 100 \
+            --gcBias \
+            --output ~/data_tfg/salmon_data/${id}
+    done
+fi
+
+#Construimos un objeto TxDb:
+cd ~/db/refanno
+
+if [ ! -e txdb_script.R ]; then
+    echo "El archivo deseado no existe. Descargando..."
+    wget https://github.com/Whuanillo/TFG/raw/main/txdb_script.R
+    Rscript txdb_script.R
+else
+    echo "El archivo deseado ya existe en el directorio actual."
+    Rscript txdb_script.R
+fi
+
+#Obtención de datos de conteos y formación de matriz de conteos
+cd ~/data_tfg
+
+if [ ! -e txdb_script_3_corregido.R ]; then
+    echo "El archivo deseado no existe. Descargando..."
+    wget https://github.com/Whuanillo/TFG/raw/main/txdb_script_3_corregido.R
+    Rscript txdb_script_3_corregido.R
+else
+    echo "El archivo deseado ya existe en el directorio actual."
+    Rscript txdb_script_3_corregido.R
+fi
