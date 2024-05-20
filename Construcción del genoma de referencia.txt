@@ -1,4 +1,6 @@
-#SCRIPT 1.1 - GENERACIÓN DEL TRANSCRIPTOMA DE REFERENCIA - OPTIMIZADO
+#!/usr/bin/env bash
+
+# GENERACIÓN DEL TRANSCRIPTOMA DE REFERENCIA - OPTIMIZADO
 
 #Creamos el directorio donde vamos a crear el TRANSCRIPTOMA en caso de que no exista
 pwd
