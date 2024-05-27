@@ -125,16 +125,16 @@ listAttributes(homology_mart)[grepl("mmusculus_homolog", listAttributes(homology
 attributes <- c("ensembl_gene_id", "mmusculus_homolog_ensembl_gene", "mmusculus_homolog_associated_gene_name")
 filters <- "ensembl_gene_id"
 values <- ensembl_gene_id
-mouse_paralogs <- getBM(attributes = attributes, filters = filters, values = values, mart = homology_mart)
+mouse_ortologs <- getBM(attributes = attributes, filters = filters, values = values, mart = homology_mart)
 
-paralogos_hpo <- mouse_paralogs$mmusculus_homolog_associated_gene_name
+ortologos_hpo <- mouse_ortologs$mmusculus_homolog_associated_gene_name
 
-paralogos_hpo <- setdiff(paralogos_hpo, "")
+ortologos_hpo <- setdiff(ortologos_hpo, "")
 
 #Ahora obtenemos un diagrama de Venn para los genes DE obtenidos y los genes de HPO
 
 venn.diagram(
-        x = list(nombres_genes, paralogos_hpo),
+        x = list(nombres_genes, ortologos_hpo),
         category.names = c("Genes DE" , "Genes de HPO"),
         filename = 'venn_diagramm_DE_vs_hpo.png',
         output=TRUE,
@@ -153,7 +153,7 @@ venn.diagram(
 #Ahora obtenemos un diagrama de Venn para comparación de los tres casos vistos
 
 venn.diagram(
-        x = list(nombres_genes, nombres_genes_Exp, paralogos_hpo),
+        x = list(nombres_genes, nombres_genes_Exp, ortologos_hpo),
         category.names = c("Genes DE" , "Genes DE (Artículo)" , "Genes de HPO"),
         filename = 'venn_diagramm_completo.png',
         output=TRUE,
@@ -174,7 +174,7 @@ venn.diagram(
 # Convertir las cadenas en vectores de caracteres
 genes1 <- strsplit(nombres_genes, ",")
 genes2 <- strsplit(nombres_genes_Exp, ",")
-genes3 <- strsplit(paralogos_hpo, ",")
+genes3 <- strsplit(ortologos_hpo, ",")
 
 # Encontrar la intersección de los tres vectores
 interseccion_genes <- Reduce(intersect, list(genes1, genes2, genes3))
