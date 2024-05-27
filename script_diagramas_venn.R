@@ -168,3 +168,23 @@ venn.diagram(
         resolution = 300 ,
         margin = 0.05
 )
+
+##Creación de tabla de genes intersecantes del diagrama de Venn 
+
+# Convertir las cadenas en vectores de caracteres
+genes1 <- strsplit(nombres_genes, ",")
+genes2 <- strsplit(nombres_genes_Exp, ",")
+genes3 <- strsplit(paralogos_hpo, ",")
+
+# Encontrar la intersección de los tres vectores
+interseccion_genes <- Reduce(intersect, list(genes1, genes2, genes3))
+interseccion_genes <- as.character(interseccion_genes)
+
+genes_interseccion_info <- getBM(attributes = c("ensembl_gene_id", "external_gene_name", "description"), #el comando getBM()  obtener información sobre los genes
+                   filters = "external_gene_name",
+                   values = interseccion_genes,
+                   mart = ensembl_mouse)
+
+genes_intersección_info
+
+write.table(genes_interseccion_info, file = "genes_interseccion_info.txt")
