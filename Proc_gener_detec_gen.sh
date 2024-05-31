@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+
+cd
+if [ ! -d data_Hunter ]; then
+    echo "El directorio data_Hunter no existe. Creando el directorio..."
+    mkdir data_Hunter
+    cd data_Hunter
+else
+    echo "El directorio data_Hunter ya existe en el directorio actual."
+    cd data_Hunter
+fi
+
+if [ ! -e CountsDE.csv ]; then
+    echo "El archivo deseado no existe. Descargando..."
+    wget https://github.com/Whuanillo/TFG/raw/main/CountsDE.csv
+else
+    echo "El archivo deseado ya existe en el directorio actual."
+fi
+
+if [ ! -e sample_treat.csv ]; then
+    echo "El archivo deseado no existe. Descargando..."
+    wget https://github.com/Whuanillo/TFG/raw/main/sample_treat.csv
+else
+    echo "El archivo deseado ya existe en el directorio actual."
+fi
+
+if [ ! -e DE_Hunter_script.sh ]; then
+    echo "El archivo deseado no existe. Descargando..."
+    wget https://github.com/Whuanillo/TFG/raw/main/DE_Hunter_script.sh
+    chmod 755 DE_Hunter_script.sh
+    ./DE_Hunter_script.sh
+else
+    echo "El archivo deseado ya existe en el directorio actual."
+    chmod 755 DE_Hunter_script.sh
+    ./DE_Hunter_script.sh
+fi
+
+if [ ! -e STRING_script.sh ]; then
+    echo "El archivo deseado no existe. Descargando..."
+    wget https://github.com/Whuanillo/TFG/raw/main/STRING_script.sh
+    chmod 755 STRING_script.sh
+    ./STRING_script.sh
+else
+    echo "El archivo deseado ya existe en el directorio actual."
+    chmod 755 STRING_script.sh
+    ./STRING_script.sh
+fi
+
