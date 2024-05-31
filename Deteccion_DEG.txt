@@ -1,0 +1,15 @@
+if [ ! -e Proc_gener_detec_gen.sh ]; then
+    echo "El archivo deseado no existe. Descargando..."
+    wget https://github.com/Whuanillo/TFG/raw/main/Proc_gener_detec_gen.sh
+    dos2unix Proc_gener_detec_gen.sh
+    chmod 755 Proc_gener_detec_gen.sh
+    ./Proc_gener_detec_gen.sh
+else
+    echo "El archivo deseado ya existe en el directorio actual."
+    dos2unix Proc_gener_detec_gen.sh
+    chmod 755 Proc_gener_detec_gen.sh
+    ./Proc_gener_detec_gen.sh
+fi
+
+#En caso de que no funcione, usar estos comandos para transformar el archivo .sh
+#sudo apt-get install dos2unix
