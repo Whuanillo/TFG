@@ -1,0 +1,14 @@
+if [ ! -e cons_gen_ref.sh ]; then
+    echo "El archivo deseado no existe. Descargando..."
+    wget https://github.com/Whuanillo/TFG/raw/main/cons_gen_ref.sh
+    chmod 755 cons_gen_ref.sh
+    ./cons_gen_ref.sh
+else
+    echo "El archivo deseado ya existe en el directorio actual."
+    chmod 755 cons_gen_ref.sh
+    ./cons_gen_ref.sh
+fi
+
+#En caso de que no funcione, usar estos comandos para transformar el archivo .sh
+#sudo apt-get install dos2unix
+#dos2unix cons_gen_ref.sh
