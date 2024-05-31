@@ -33,12 +33,14 @@ else
     Rscript DE_Hunter_script.R
 fi
 
-if [ ! -e STRING_script.R ]; then
+if [ ! -e STRING_script.sh ]; then
     echo "El archivo deseado no existe. Descargando..."
-    wget https://github.com/Whuanillo/TFG/raw/main/STRING_script.R
-    Rscript STRING_script.R
+    wget https://github.com/Whuanillo/TFG/raw/main/STRING_script.sh
+    chmod 755 STRING_script.sh
+    ./STRING_script.sh
 else
     echo "El archivo deseado ya existe en el directorio actual."
-    Rscript STRING_script.R
+    chmod 755 STRING_script.sh
+    ./STRING_script.sh
 fi
 
