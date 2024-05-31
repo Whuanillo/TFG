@@ -1,9 +1,8 @@
 #!/usr/bin/env bash
-
+pwd
 # GENERACIÓN DEL TRANSCRIPTOMA DE REFERENCIA - OPTIMIZADO
 
 #Creamos el directorio donde vamos a crear el TRANSCRIPTOMA en caso de que no exista
-pwd
 cd
 if [ ! -d db ]; then
     echo "El directorio db no existe. Creando el directorio..."
