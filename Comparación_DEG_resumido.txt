@@ -1,0 +1,15 @@
+if [ ! -e comparacion_DEG.sh ]; then
+    echo "El archivo deseado no existe. Descargando..."
+    wget https://github.com/Whuanillo/TFG/raw/main/comparacion_DEG.sh
+    dos2unix comparacion_DEG.sh
+    chmod 755 comparacion_DEG.sh
+    ./comparacion_DEG.sh
+else
+    echo "El archivo deseado ya existe en el directorio actual."
+    dos2unix comparacion_DEG.sh
+    chmod 755 comparacion_DEG.sh
+    ./comparacion_DEG.sh
+fi
+
+#En caso de que no funcione, usar estos comandos para transformar el archivo .sh
+#sudo apt-get install dos2unix
