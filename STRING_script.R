@@ -1,3 +1,5 @@
+#!/usr/bin/env Rscript
+
 counts <- read.csv("CountsDE.csv" , row.names = 1)
 counts <- round(counts , 0) #Para quitar los decimales
 rownames(counts) <- gsub("\\..*" , "" , rownames(counts)) #Para quitar los decimales de los identificadores de los genes
