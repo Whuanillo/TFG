@@ -12,3 +12,5 @@ fi
 #En caso de que no funcione, usar estos comandos para transformar el archivo .sh
 #sudo apt-get install dos2unix
 #dos2unix cons_gen_ref.sh
+#chmod 755 cons_gen_ref.sh
+#./cons_gen_ref.sh
