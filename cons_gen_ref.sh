@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin bash
 pwd
 # GENERACIÓN DEL TRANSCRIPTOMA DE REFERENCIA - OPTIMIZADO
 
