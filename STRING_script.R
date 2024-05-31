@@ -35,7 +35,7 @@ nombres_genes <- merged_info$external_gene_name
 
 library(STRINGdb)
 
-string_db <- STRINGdb$new(  species=9606,
+string_db <- STRINGdb$new(  species=10090,
                            score_threshold=200, network_type="full", input_directory="")
 
 vector_of_pvalues <- genes[,3]
@@ -49,3 +49,8 @@ hits <- example1_mapped$STRING_id[1:200]
 string_db$plot_network( hits )  
 
 #Esto nos generará un mapa de genes con sus interacciones
+
+#Lo siguiente es obtener los 4 clusteres mas probables
+clustersList <- string_db$get_clusters(example1_mapped$STRING_id[1:200])
+par(mfrow=c(2,2))
+for(i in seq(1:4)){ string_db$plot_network(clustersList[[i]]) }
