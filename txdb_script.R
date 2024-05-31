@@ -1,3 +1,4 @@
+#!/usr/bin/env Rscript
 library(GenomicFeatures)
 gtf <- "gencode.vM34.annotation.gtf"
 txdb.filename <- "gencode.vM34.annotation.sqlite"
