@@ -1,3 +1,4 @@
+#!/usr/bin/env Rscript
 library(GenomicFeatures)
 txdb.filename <- "~/db/refanno/gencode.vM34.annotation.sqlite"
 txdb <- loadDb(txdb.filename)
