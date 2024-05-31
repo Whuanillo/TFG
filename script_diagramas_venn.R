@@ -1,3 +1,4 @@
+#!/usr/bin/env Rscript
 counts <- read.csv("CountsDE.csv" , row.names = 1)
 counts <- round(counts , 0) #Para quitar los decimales
 rownames(counts) <- gsub("\\..*" , "" , rownames(counts)) #Para quitar los decimales de los identificadores de los genes
@@ -168,6 +169,14 @@ venn.diagram(
         resolution = 300 ,
         margin = 0.05
 )
+
+##Nivel de significacia de las intersecciones
+
+phyper(1328+37,501+2+1328+37,15382-501-2-1328-37,1328+37+2+152,lower.tail=F) #Para la interseccion de DEG y DEG del articulo
+
+phyper(2+37,501+2+1328+37,15382-501-2-1328-37,2+37+2+194,lower.tail=F) #Para la interseccion de DEG y los genes de HPO
+
+phyper(2+37,1328+37+2+152,15382-(1328+37+2+152),2+37+2+194,lower.tail=F) #Para la interseccion de DEG y los genes de HPO
 
 ##Creación de tabla de genes intersecantes del diagrama de Venn 
 
